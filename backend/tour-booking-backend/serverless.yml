@@ -1,0 +1,60 @@
+# - Lambda function name
+service: tour-booking-api
+
+frameworkVersion: "3"
+
+provider:
+  # Cloud provider
+  name: aws
+
+  # Runtime cho Lambda
+  # Phải khớp với Node version build
+  runtime: nodejs20.x
+
+  # Region deploy
+  region: ap-southeast-1
+
+  # Stage (môi trường)
+  # --stage prod → prod
+  # không truyền → dev
+  stage: ${opt:stage, 'dev'}
+
+  # RAM cho mỗi Lambda invocation (MB)
+  memorySize: 512
+
+  # Timeout tối đa của Lambda (giây)
+  timeout: 30
+
+  # Biến môi trường cho Lambda
+  environment:
+    # NODE_ENV = dev | prod | staging...
+    NODE_ENV: ${self:provider.stage}
+
+functions:
+  # Tên function (logical name)
+  api:
+    # File build output
+    # dist/lambda.js → export handler
+    handler: dist/lambda.handler
+
+    # Event trigger
+    events:
+      - httpApi:
+          # Bắt toàn bộ route
+          # /users
+          # /users/1
+          # /auth/login
+          path: /{proxy+}
+
+          # Cho phép tất cả HTTP methods
+          method: ANY
+
+package:
+  # Mỗi function đóng gói riêng
+  # Giảm size package, deploy nhanh hơn
+  individually: true
+
+  # Không đóng gói các thư mục này
+  exclude:
+    - node_modules/**
+    - src/**
