@@ -1,16 +1,9 @@
-// Import NestFactory để tạo NestJS application
 import { NestFactory } from '@nestjs/core';
-
-// Module gốc của ứng dụng NestJS
 import { AppModule } from './app.module';
-
 // Thư viện giúp chạy Express app trong AWS Lambda
 import serverlessExpress from '@vendia/serverless-express';
-
-// ValidationPipe dùng để validate DTO (request body, query, params)
 import { ValidationPipe } from '@nestjs/common';
 
-// Biến server được khai báo ở scope toàn cục
 // Mục đích: cache server giữa các lần Lambda được gọi (cold start / warm start)
 let server: any;
 

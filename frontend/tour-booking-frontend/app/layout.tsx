@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import HeaderBar from "@/components/header/HeaderBar";
+import { useAuthStore } from "@/stores/authStore";
+import { useEffect } from "react";
+import { refreshAuth } from "@/api/auth";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,6 +26,17 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const setLoading = useAuthStore((state) => state.setLoading);
+
+  useEffect(() => {
+    const initAuth = async () => {
+      setLoading(true);
+      await refreshAuth();
+      setLoading(false);
+    };
+
+    initAuth();
+  }, [setLoading]);
   return (
     <html lang="en">
       <body
